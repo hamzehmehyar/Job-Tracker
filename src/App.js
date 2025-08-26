@@ -1,25 +1,130 @@
-import logo from './logo.svg';
 import './App.css';
+import Login from './components/login';
+import Register from './components/register';
+import { BrowserRouter as Router, Routes , Route } from 'react-router-dom';
+import Profile from './components/profile';
+import Admin from './components/admin';
+import ProtectedRoute from './components/protectedRoute';
+import Error from './components/error404';
 
-function App() {
+import { auth , db } from './components/firebase';
+
+import { useEffect , useState } from 'react';
+import Dashboard from './components/dashboard';
+import { doc, getDoc } from 'firebase/firestore';
+
+
+export default function App() {
+
+  const [user , setUser] = useState(null);
+  const [userData , setUserData] = useState(null);
+  const [loading , setLoading] = useState(true);
+
+  useEffect(() => {
+
+
+    const unsubscribe = auth.onAuthStateChanged( async (currentUser) => {
+
+      setUser(currentUser);
+
+      if(currentUser) {
+
+        const docRef = doc(db , "users" , currentUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()){
+
+          setUserData(docSnap.data());
+
+        }
+
+      } else {
+
+        setUserData(null);
+
+      }
+
+      setLoading(false);
+
+    });
+
+    return () => unsubscribe();
+
+
+  } , [])
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
 
-export default App;
+    <Router>
+
+
+      <Routes>
+
+        <Route path='/' element = {<Login />} />
+        <Route path='/register' element = {<Register/>} />
+        
+        {/*protected routes*/}
+
+        <Route
+        
+          path='/profile'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} loading={loading}>
+
+              <Profile />
+
+            </ProtectedRoute>
+
+          }
+        
+        />
+
+        <Route
+        
+          path='/admin'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} requiredRole="admin" loading={loading}>
+
+              <Admin/>
+
+            </ProtectedRoute>
+
+          }
+        
+        />
+
+        <Route 
+        
+          path='/dashboard'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} loading={loading}>
+
+              <Dashboard />
+
+            </ProtectedRoute>
+
+          }
+        
+        />
+
+        <Route 
+        
+          path='*'
+          element={<Error />}
+        
+        />
+
+
+      </Routes>
+
+
+    </Router>
+
+  );
+
+
+}

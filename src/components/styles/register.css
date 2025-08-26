@@ -1,0 +1,66 @@
+.registerContainer {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f4f8;
+  font-family: 'Arial', sans-serif;
+
+}
+
+
+.registerContainer form {
+
+  background: #ffffff;
+  padding: 40px 62px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+}
+
+
+.registerInputs input {
+
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  transition: all 0.2s;
+  width: 100%;
+
+}
+
+
+.registerInputs input:focus {
+
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+
+}
+
+
+
+.registerInputs input::placeholder {
+
+  color: #aaa;
+
+}
+
+
+@media (max-width: 400px) {
+
+  .registerContainer form {
+
+    width: 90%;
+    padding: 30px 20px;
+
+  }
+  
+}
+
