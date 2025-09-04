@@ -63,9 +63,11 @@ export default function Profile(){
 
     return(
 
-        <div className="profile-container">
+        <>
 
-            <Navbar userData={userData}/>
+        <Navbar userData={userData}/>
+
+        <div className="profile-container">
 
             <h1>Profile</h1>
 
@@ -76,6 +78,8 @@ export default function Profile(){
             <button onClick={handleLogout}>Logout</button>
 
         </div>
+
+        </>
 
 
     );
