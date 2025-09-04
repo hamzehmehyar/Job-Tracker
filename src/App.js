@@ -12,6 +12,9 @@ import { auth , db } from './components/firebase';
 import { useEffect , useState } from 'react';
 import Dashboard from './components/dashboard';
 import { doc, getDoc } from 'firebase/firestore';
+import ResumeHelper from './components/resumeHelper';
+import JobAnalyzer from './components/jobAnalyzer';
+import Chatbot from './components/chatbot';
 
 
 export default function App() {
@@ -104,6 +107,51 @@ export default function App() {
             <ProtectedRoute user={user} userData={userData} loading={loading}>
 
               <Dashboard />
+
+            </ProtectedRoute>
+
+          }
+        
+        />
+
+        <Route 
+        
+          path='/resumeHelper'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} loading={loading}>
+
+              <ResumeHelper />
+
+            </ProtectedRoute>
+
+          }
+
+        />
+
+        <Route 
+        
+          path='/jobAnalyzer'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} loading={loading}>
+
+              <JobAnalyzer />
+
+            </ProtectedRoute>
+
+          }
+        
+        />
+
+        <Route 
+
+          path='/chatbot'
+          element= {
+
+            <ProtectedRoute user={user} userData={userData} loading={loading}>
+
+              <Chatbot />
 
             </ProtectedRoute>
 

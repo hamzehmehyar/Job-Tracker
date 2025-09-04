@@ -15,6 +15,11 @@ export default function Dashboard() {
   const [filter, setFilter] = useState("All");
   const [userData , setUserData] = useState(null);
 
+  //states for insights
+  const [stats , setStats] = useState(null);
+  const [summary , setSummary] = useState("");
+  const [loadingSummary , setLoadingSummary] = useState(false);
+
   const navigate = useNavigate();
 
   const user = auth.currentUser;
@@ -35,6 +40,48 @@ export default function Dashboard() {
     const snapshot = await getDocs(q);
     const apps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setApplications(apps);
+
+    // count statuses
+    const counts = { Applied: 0 , Interview: 0 , Rejected: 0 , Hired: 0 };
+
+    apps.forEach((app) => {
+
+      if(counts[app.status] !== undefined){
+
+        counts[app.status] += 1;
+
+      }
+
+    });
+
+    setStats(counts);
+
+    //now we will fetch motivitional summary
+    try {
+      
+      setLoadingSummary(true);
+
+      const res = await fetch("http://localhost:5000/api/insights" , {
+
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stats: counts }),
+
+      });
+
+      const data = await res.json();
+
+      setSummary(data.summary);
+
+    } catch (error) {
+
+      console.error("Insights fetch error : ", error);
+      
+    } finally {
+
+      setLoadingSummary(false);
+
+    }
 
   };
 
@@ -70,18 +117,51 @@ export default function Dashboard() {
   // Update application status
 
   const handleStatusChange = async (id, newStatus) => {
+
     const appRef = doc(db, "applications", id);
     await updateDoc(appRef, { status: newStatus });
     fetchApplications();
+
   };
 
   const filteredApps = filter === "All" ? applications : applications.filter(a => a.status === filter);
 
   return (
 
+
+    <>
+
     <div style={{ padding: "20px" }}>
 
         <Navbar userData={userData} />
+
+        
+    <div className="Insights-Section">
+
+       {/* Insights section */}
+
+       <h2>Insights</h2>
+
+       {stats && (
+
+          <ul>
+
+              <li>Applied: {stats.Applied}</li>
+              <li>Interviews: {stats.Interview}</li>
+              <li>Rejected: {stats.Rejected}</li>
+              <li>Hired: {stats.Hired}</li>
+
+          </ul>
+
+       )}
+
+       <h3>Motivational Summary</h3>
+
+       {loadingSummary ? <p>Generating summary...</p> : <p>{summary}</p>}
+
+
+    </div>
+
 
       <h1>Dashboard</h1>
 
@@ -143,6 +223,8 @@ export default function Dashboard() {
       </ul>
 
     </div>
+
+    </>
 
   );
 }

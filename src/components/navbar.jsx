@@ -32,6 +32,12 @@ export default function Navbar( {userData} ){
             <button onClick={() => navigate("/dashboard")}>Dashboard</button>
             <button onClick={() => navigate("/profile")}>Profile</button>
 
+            <button onClick={() => navigate("/resumeHelper")}>Resume Ai Helper</button>
+
+            <button onClick={() => navigate("/jobAnalyzer")}>Ai job analyzer</button>
+
+            <button onClick={() => navigate("/chatbot")}>Chatbot</button>
+
             {userData?.role === "admin" && <button onClick={() => navigate("/admin")}>Admin</button>}
 
             <button onClick={handleLogout}>Logout</button>
